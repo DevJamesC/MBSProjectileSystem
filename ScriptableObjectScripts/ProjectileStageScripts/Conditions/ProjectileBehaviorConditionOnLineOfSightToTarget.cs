@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MBS.ProjectileSystem
 {
-    [CreateAssetMenu(fileName = "StageConditionOnLineOfSightToTarget", menuName = "MBSTools/Scriptable Objects/ Projectiles/ StageCondition/ On Line of Sight to Target")]
+    [CreateAssetMenu(fileName = "StageConditionOnLineOfSightToTarget", menuName = "MBS/Projectile System/Scriptable Objects/ Projectiles/ StageCondition/ On Line of Sight to Target")]
     public class ProjectileBehaviorConditionOnLineOfSightToTarget : ProjectileBehaviorCondition
     {
         [Tooltip("Will this condition evaluate True when we have No line of sight, or when we do have line of sight?")]

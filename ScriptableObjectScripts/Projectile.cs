@@ -9,7 +9,7 @@ using UnityEngine.AddressableAssets;
 namespace MBS.ProjectileSystem
 {
 
-    [CreateAssetMenu(fileName = "NewProjectile", menuName = "MBSTools/Scriptable Objects/ Projectiles/ New Projectile")]
+    [CreateAssetMenu(fileName = "NewProjectile", menuName = "MBS/Projectile System/Scriptable Objects/ Projectiles/ New Projectile")]
     public class Projectile : ScriptableObject
     {
         //[Header("GRAPHICS")]

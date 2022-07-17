@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace MBS.ProjectileSystem {
-    [CreateAssetMenu(fileName = "StageActionSnapToFaceTarget", menuName = "MBSTools/Scriptable Objects/ Projectiles/ StageAction/ Snap To Face Target")]
+    [CreateAssetMenu(fileName = "StageActionSnapToFaceTarget", menuName = "MBS/Projectile System/Scriptable Objects/ Projectiles/ StageAction/ Snap To Face Target")]
     public class ProjectileBehaviorActionSnapToFaceTarget : ProjectileBehaviorAction
     {
         [Range(1,180),Tooltip("The amount that the projectile can turn, in degrees, when this actions triggers")]

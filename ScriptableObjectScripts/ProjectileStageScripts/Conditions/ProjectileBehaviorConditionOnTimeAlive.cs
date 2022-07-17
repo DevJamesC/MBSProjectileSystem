@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MBS.ProjectileSystem
 {
-    [CreateAssetMenu(fileName = "StageConditionOnTimeAlive", menuName = "MBSTools/Scriptable Objects/ Projectiles/ StageCondition/ On Time Alive")]
+    [CreateAssetMenu(fileName = "StageConditionOnTimeAlive", menuName = "MBS/Projectile System/Scriptable Objects/ Projectiles/ StageCondition/ On Time Alive")]
     public class ProjectileBehaviorConditionOnTimeAlive : ProjectileBehaviorCondition
     {
         [Tooltip("The time alive before this condition evaluates true")]

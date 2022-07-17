@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-[CreateAssetMenu(fileName = "ProjectileMaterialEffectDictionary", menuName = "MBSTools/Scriptable Objects/ New ProjectileMaterialEffectDictionary")]
+[CreateAssetMenu(fileName = "ProjectileMaterialEffectDictionary", menuName = "MBS/Projectile System/Scriptable Objects/ New ProjectileMaterialEffectDictionary")]
 public class ProjectileMaterialEffectDictionary : ScriptableObject
 {
     //make the ability to add material tag -- projectile tag linkages, and have a sound and particle effect inside the linkage

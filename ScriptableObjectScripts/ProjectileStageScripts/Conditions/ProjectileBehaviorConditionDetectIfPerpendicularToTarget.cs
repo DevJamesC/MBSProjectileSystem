@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MBS.ProjectileSystem
 {
-    [CreateAssetMenu(fileName = "StageConditionPerpedicularToTarget", menuName = "MBSTools/Scriptable Objects/ Projectiles/ StageCondition/ Perpedicular To Target")]
+    [CreateAssetMenu(fileName = "StageConditionPerpedicularToTarget", menuName = "MBS/Projectile System/Scriptable Objects/ Projectiles/ StageCondition/ Perpedicular To Target")]
     public class ProjectileBehaviorConditionDetectIfPerpendicularToTarget : ProjectileBehaviorCondition
     {
         [Range(1,90),Tooltip("Since some projectiles move very fast, set this higher to allow the projectile to turn even if it has not reached/ has passed the target")]

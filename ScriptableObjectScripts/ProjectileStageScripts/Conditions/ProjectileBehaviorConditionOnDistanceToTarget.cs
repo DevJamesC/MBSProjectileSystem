@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MBS.ProjectileSystem
 {
-    [CreateAssetMenu(fileName = "StageConditionOnDistanceToTarget", menuName = "MBSTools/Scriptable Objects/ Projectiles/ StageCondition/ On Distance to Target")]
+    [CreateAssetMenu(fileName = "StageConditionOnDistanceToTarget", menuName = "MBS/Projectile System/Scriptable Objects/ Projectiles/ StageCondition/ On Distance to Target")]
     public class ProjectileBehaviorConditionOnDistanceToTarget : ProjectileBehaviorCondition
     {
         [Tooltip("The distance between the projectile and the target before this condition evaluates true")]

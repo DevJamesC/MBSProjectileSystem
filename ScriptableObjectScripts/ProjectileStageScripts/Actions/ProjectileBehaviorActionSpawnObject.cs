@@ -7,7 +7,7 @@ using UnityEngine.AddressableAssets;
 
 namespace MBS.ProjectileSystem
 {
-    [CreateAssetMenu(fileName = "StageActionSpawnObject", menuName = "MBSTools/Scriptable Objects/ Projectiles/ StageAction/ Spawn Object")]
+    [CreateAssetMenu(fileName = "StageActionSpawnObject", menuName = "MBS/Projectile System/Scriptable Objects/ Projectiles/ StageAction/ Spawn Object")]
     public class ProjectileBehaviorActionSpawnObject : ProjectileBehaviorAction
     {
         [Tooltip("Assign either a Prefab or an Addressable. If a prefab and addressable are assigned, the addressable will be ignored.")]

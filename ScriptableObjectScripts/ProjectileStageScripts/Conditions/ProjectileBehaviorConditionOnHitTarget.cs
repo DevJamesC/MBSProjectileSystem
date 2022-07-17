@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MBS.ProjectileSystem
 {
-    [CreateAssetMenu(fileName = "StageConditionOnHitTarget", menuName = "MBSTools/Scriptable Objects/ Projectiles/ StageCondition/ On Hit Target")]
+    [CreateAssetMenu(fileName = "StageConditionOnHitTarget", menuName = "MBS/Projectile System/Scriptable Objects/ Projectiles/ StageCondition/ On Hit Target")]
     public class ProjectileBehaviorConditionOnHitTarget : ProjectileBehaviorCondition
     {
         public override bool Evaluate(ActiveProjectile proj)

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MBS.ProjectileSystem
 {
-    [CreateAssetMenu(fileName = "StageActionKillProjectile", menuName = "MBSTools/Scriptable Objects/ Projectiles/ StageAction/ Kill Projectile")]
+    [CreateAssetMenu(fileName = "StageActionKillProjectile", menuName = "MBS/Projectile System/Scriptable Objects/ Projectiles/ StageAction/ Kill Projectile")]
     public class ProjectileBehaviorActionKillProjectile : ProjectileBehaviorAction
     {
         public override void Tick(ActiveProjectile proj)

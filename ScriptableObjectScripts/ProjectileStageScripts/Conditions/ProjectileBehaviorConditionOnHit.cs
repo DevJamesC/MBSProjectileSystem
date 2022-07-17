@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MBS.ProjectileSystem
 {
-    [CreateAssetMenu(fileName = "StageConditionOnHit", menuName = "MBSTools/Scriptable Objects/ Projectiles/ StageCondition/ On Hit")]
+    [CreateAssetMenu(fileName = "StageConditionOnHit", menuName = "MBS/Projectile System/Scriptable Objects/ Projectiles/ StageCondition/ On Hit")]
     public class ProjectileBehaviorConditionOnHit : ProjectileBehaviorCondition
     {
         [Tooltip("will this evaluate true against colliders, triggers, or both")]

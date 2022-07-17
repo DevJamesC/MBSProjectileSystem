@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MBS.ProjectileSystem
 {
-    [CreateAssetMenu(fileName = "StageConditionOnDistanceTraveled", menuName = "MBSTools/Scriptable Objects/ Projectiles/ StageCondition/ On Distance Traveled")]
+    [CreateAssetMenu(fileName = "StageConditionOnDistanceTraveled", menuName = "MBS/Projectile System/Scriptable Objects/ Projectiles/ StageCondition/ On Distance Traveled")]
     public class ProjectileBehaviorConditionOnDistanceTraveled : ProjectileBehaviorCondition
     {
         [Tooltip("The distance traveled before this condition evaluates true")]

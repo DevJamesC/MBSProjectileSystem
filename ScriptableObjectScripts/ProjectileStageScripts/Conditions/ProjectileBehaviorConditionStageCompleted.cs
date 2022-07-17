@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MBS.ProjectileSystem
 {
-    [CreateAssetMenu(fileName = "StageConditionOnStageCompleted", menuName = "MBSTools/Scriptable Objects/ Projectiles/ StageCondition/ On Stage Completed")]
+    [CreateAssetMenu(fileName = "StageConditionOnStageCompleted", menuName = "MBS/Projectile System/Scriptable Objects/ Projectiles/ StageCondition/ On Stage Completed")]
     public class ProjectileBehaviorConditionStageCompleted : ProjectileBehaviorCondition
     {
         public int EvaluatedStageIndex;

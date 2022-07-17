@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace MBS.ProjectileSystem
 {
-    [CreateAssetMenu(fileName = "StageActionEmitProjectile", menuName = "MBSTools/Scriptable Objects/ Projectiles/ StageAction/ Emit Projectile")]
+    [CreateAssetMenu(fileName = "StageActionEmitProjectile", menuName = "MBS/Projectile System/Scriptable Objects/ Projectiles/ StageAction/ Emit Projectile")]
     public class ProjectileBehaviorActionEmitProjectile : ProjectileBehaviorAction
     {
        

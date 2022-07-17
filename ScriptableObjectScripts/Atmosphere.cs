@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewAtmosphere", menuName = "MBSTools/Scriptable Objects/ New Atmosphere")]
+[CreateAssetMenu(fileName = "NewAtmosphere", menuName = "MBS/Projectile System/Scriptable Objects/ New Atmosphere")]
 public class Atmosphere : ScriptableObject
 {
     [Tooltip("Should be 0 for vaccum, and .5 to 2 for normal to thick atmosphres")]

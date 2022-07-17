@@ -7,7 +7,7 @@ using static UnityEngine.ParticleSystem;
 
 namespace MBS.ProjectileSystem
 {
-    [CreateAssetMenu(fileName = "StageActionSwitchProjectilePresets", menuName = "MBSTools/Scriptable Objects/ Projectiles/ StageAction/ Switch Projectile Presets")]
+    [CreateAssetMenu(fileName = "StageActionSwitchProjectilePresets", menuName = "MBS/Projectile System/Scriptable Objects/ Projectiles/ StageAction/ Switch Projectile Presets")]
     public class ProjectileBehaviorActionSwitchToDifferentProjectilePreset : ProjectileBehaviorAction
     {
         [Tooltip("Use this to change the projectile values when the stage activates. If not changing the values, leave this null")]
