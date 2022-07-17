@@ -1,3 +1,7 @@
+DEPENDENCIES
+-MBSTools (https://github.com/DevJamesC/MBSTools)
+-Addressables
+
 To create something that launches projectiles, 
 1. Extend ProjectileEmitter.cs
 2. Set localTimescaleValue and localGravityValue in start or update (presumibly to Time.Timescale and Physics.Gravity)
