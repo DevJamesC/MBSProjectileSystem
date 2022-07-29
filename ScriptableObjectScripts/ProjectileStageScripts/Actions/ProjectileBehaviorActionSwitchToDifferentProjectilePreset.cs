@@ -110,7 +110,7 @@ namespace MBS.ProjectileSystem
                             {
                                 proj.SetUpTrailingGameObject(trail.Object, proj.Position);
                             }
-                            else if (trail.IsLoadingHandle)
+                            else if (trail.IsLoadingHandle())
                             {
                                 trail.Handle.Completed += (asyncOperationHandle) =>
                                 {

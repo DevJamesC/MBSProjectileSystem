@@ -41,7 +41,7 @@ namespace MBS.ProjectileSystem
                         {
                             SpawnPrefab(proj, obj.Object);
                         }
-                        else if (obj.IsLoadingHandle)
+                        else if (obj.IsLoadingHandle())//If we have a handle telling us when the asset has been loaded into memory (but not yet started to instanciate)...
                         {
                             ActiveProjectile projClone = new ActiveProjectile(proj);
                             obj.Handle.Completed += (asyncOperationHandle) =>
@@ -64,7 +64,7 @@ namespace MBS.ProjectileSystem
 
                             };
                         }
-                        else
+                        else//If we have a handle telling us when the asset has been instanciated...
                         {
                             ActiveProjectile projClone = new ActiveProjectile(proj);
                             obj.Handle.Completed += (asyncOperationHandle) =>
