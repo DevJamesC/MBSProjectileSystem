@@ -86,7 +86,7 @@ public class ProjectileOnHitParticleEmitter : MBSSingleton<ProjectileOnHitPartic
         MBSSimpleAddressablePooler pooler = MBSSimpleAddressablePooler.GetInstanceOrInstanciate(assetReference);
         if (pooler != null)
         {
-            GameObjectOrHandle<GameObject> pooledObject = MBSSimpleAddressablePooler.GetInstanceOrInstanciate(assetReference).GetPooledGameObject();
+            GameObjectOrHandle<GameObject> pooledObject = pooler.GetPooledGameObject();
 
             if (pooledObject == null)
                 return;

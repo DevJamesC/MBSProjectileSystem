@@ -87,22 +87,25 @@ namespace MBS.ProjectileSystem
             _particlesToChange = null;
             isFixedUpdateFrame = false;
             //Preload all graphics, spawns, and effects associated with this emitter
-            ProjectileOnHitParticleEmitter.PreloadHitAndEmitEffects(ProjectileSO.tag, ProjectileSO.effectDictionary);
-            if (ProjectileSO.projectileParticleSystemPrefab.RuntimeKeyIsValid())
-                SpawnAddressable.LoadAsset(ProjectileSO.projectileParticleSystemPrefab);
-            if (ProjectileSO.projectileTrailParticleSystemPrefab.RuntimeKeyIsValid())
-                SpawnAddressable.LoadAsset(ProjectileSO.projectileTrailParticleSystemPrefab);
-            foreach (var action in ProjectileSO.GetAllAssignedActionsOfType<ProjectileBehaviorActionSwitchToDifferentProjectilePreset>())
+            if (ProjectileSO != null)
             {
-                ProjectileBehaviorActionSwitchToDifferentProjectilePreset switchAction = action as ProjectileBehaviorActionSwitchToDifferentProjectilePreset;
-                if (switchAction.ProjectileBaseToChangeTo.projectileTrailParticleSystemPrefab.RuntimeKeyIsValid())
-                    SpawnAddressable.LoadAsset(switchAction.ProjectileBaseToChangeTo.projectileTrailParticleSystemPrefab);
-            }
-            foreach (var action in ProjectileSO.GetAllAssignedActionsOfType<ProjectileBehaviorActionSpawnObject>())
-            {
-                ProjectileBehaviorActionSpawnObject switchAction = action as ProjectileBehaviorActionSpawnObject;
-                if (switchAction.AddressableToSpawn.RuntimeKeyIsValid())
-                    SpawnAddressable.LoadAsset(switchAction.AddressableToSpawn);
+                ProjectileOnHitParticleEmitter.PreloadHitAndEmitEffects(ProjectileSO.tag, ProjectileSO.effectDictionary);
+                if (ProjectileSO.projectileParticleSystemPrefab.RuntimeKeyIsValid())
+                    SpawnAddressable.LoadAsset(ProjectileSO.projectileParticleSystemPrefab);
+                if (ProjectileSO.projectileTrailParticleSystemPrefab.RuntimeKeyIsValid())
+                    SpawnAddressable.LoadAsset(ProjectileSO.projectileTrailParticleSystemPrefab);
+                foreach (var action in ProjectileSO.GetAllAssignedActionsOfType<ProjectileBehaviorActionSwitchToDifferentProjectilePreset>())
+                {
+                    ProjectileBehaviorActionSwitchToDifferentProjectilePreset switchAction = action as ProjectileBehaviorActionSwitchToDifferentProjectilePreset;
+                    if (switchAction.ProjectileBaseToChangeTo.projectileTrailParticleSystemPrefab.RuntimeKeyIsValid())
+                        SpawnAddressable.LoadAsset(switchAction.ProjectileBaseToChangeTo.projectileTrailParticleSystemPrefab);
+                }
+                foreach (var action in ProjectileSO.GetAllAssignedActionsOfType<ProjectileBehaviorActionSpawnObject>())
+                {
+                    ProjectileBehaviorActionSpawnObject switchAction = action as ProjectileBehaviorActionSpawnObject;
+                    if (switchAction.AddressableToSpawn.RuntimeKeyIsValid())
+                        SpawnAddressable.LoadAsset(switchAction.AddressableToSpawn);
+                }
             }
         }
 
@@ -349,6 +352,12 @@ namespace MBS.ProjectileSystem
         {
             if (!projectileSO)
                 projectileSO = ProjectileSO;
+
+            if (projectileSO == null)
+            {
+                Debug.LogWarning(gameObject.name+" tried to emit a projectile, but no projectile data has been assign!");
+                return null;
+            }
 
             ActiveProjectile proj = new ActiveProjectile(projectileSO, this, position, direction, seekdata, isDryRun, noGraphics);
             inFlightProjectiles.Add(proj);
