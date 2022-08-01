@@ -21,7 +21,7 @@ namespace MBS.ProjectileSystem
         protected ProjectileParticleRotationMode ParticleRotationMode;
         [SerializeField, MBSReadOnly, Tooltip("If the projectile graphic is a mesh, it should be rotated in 3D space. Otherwise it should be rotated relative to the camera view. This value is set automatically.")]
         protected bool RotateParticleIn3DSpace;
-        [SerializeField, Tooltip("Adjust this for 3d mesh projectiles if the model needs an offset to be 'heading' correctly according to velocity. This does not take into account center of gravity. Make sure that the" +
+        [SerializeField, Tooltip("Adjust this for 3d mesh projectiles if the model needs an offset to be 'heading' correctly according to velocity. This does not take into account center of gravity. Make sure that the " +
             "projectile system Renderer is set to 'world' and not 'view', otherwise the rotation will be rotated according to the angle you are looking at the projectile.")]
         protected Vector3 ParticleSystemRotationOffset;
         [SerializeField, Tooltip("The particle system which will be used to visualize any projectile trail. Usually this can be done with the 'Trail' module in the ProjectileParticlePrefab." +
@@ -31,6 +31,9 @@ namespace MBS.ProjectileSystem
         [SerializeField, Tooltip("Enable this for the trail object to persist after the projectile has been removed from the simulation. This will work for an enemy that launches enemies, or such other maddness." +
             " Add component MBSSimpleObjectPooler to the prefab to add a lifetime expiration counter to the perminently spawned projectiles")]
         protected bool TrailObjectPersistsAfterProjectileDies;
+        [SerializeField,Tooltip("If the trail object has a particle system which is supposed to disable gameobject on stop, and it doesn't seem to be working, enable this to remove all" +
+            " partciles from the system on death as well. It may fix the issue.")]
+        protected bool ClearTrailParticlesOnProjectileDeath;
         [SerializeField, Tooltip("The tag which will be used to figure out what hit sounds and effects this projectile causes. Leave it blank to have no hit sound or particle effect.")]
         protected ProjectileTag Tag;
         [SerializeField, Tooltip("The dictonary to use when looking up what effects and sounds to play when shooting from within, or hitting certain materials.")]
@@ -54,7 +57,7 @@ namespace MBS.ProjectileSystem
             "UsePathAsGravity: The X and Y paths of the projectile will be used to apply gravity, instead of the planet's gravity. This is good for projectiles which are fast and straight\n\n" +
             "UsePathAsGravityMultiplier: The X and Y paths of the projectile will be used as a multiplier against the planet's gravity. This is like 'UsePathAsGravity', but will conform to gravity differences.")]
         protected ProjectileGravityMode GravityOption;
-        [SerializeField, Tooltip("This has no effect if gravity is not enabled. This clamps the maximum acceleration able to be exerted by gravity on the projectile. Set this low (50 or lower) for long lived projectiles, so they don't end up gaining a silly" +
+        [SerializeField, Tooltip("This has no effect if gravity is not enabled. This clamps the maximum acceleration able to be exerted by gravity on the projectile. Set this low (50 or lower) for long lived projectiles, so they don't end up gaining a silly " +
             "amount of speed and breaking Unity due to float position values being too big. For more accurate arcs or distance (for a mortar or whatnot) or for very heavy projectiles, set this higher.")]
         protected float TerminalVelociy = 50f;
 
@@ -65,19 +68,20 @@ namespace MBS.ProjectileSystem
         protected MBSAnimationCurve ProjectilePathX = MBSAnimationCurve.Constant(1, 0);
         [SerializeField, Tooltip("Do the paths represent the hard/ sticky flight path (False) or do the paths represent a force added relative to the bullets position (True)?")]
         protected bool PathsAreRelative;
-        [SerializeField, Tooltip("If this is true, the XY curves will be evaulated using the projectile's total distance traveled. If it is false, it will evaluate using the projectile's total time alive." +
+        [SerializeField, Tooltip("If this is true, the XY curves will be evaulated using the projectile's total distance traveled. If it is false, it will evaluate using the projectile's total time alive. " +
                  "Using total lifetime is better if a projectile is prone to slowing down due to collisions and the like. Using distance will result in more consistant projectile behavior.")]
         protected bool EvaluteCurvesWithDistance;
 
         //[Header("PARTICLE COLLISION AND SAMPLES")]
-        [SerializeField, Tooltip("Some slower projectiles may end up passing through other moving physics objects. In such cases, set this to True to allow those objects to detect if they hit the particle, in addition to the raycasts")]
+        [SerializeField, Tooltip("Some slower projectiles may end up passing through other moving physics objects. In such cases, set this to True to allow those objects to detect if they hit the particle, in addition to the raycasts. This requires a Projectile Particle Effect Prefab "
+            +"with particle collisions active.")]
         protected bool UseParticleCollider;
         [SerializeField, Tooltip("The Recommended number of Samples. More curvy things and faster things may need more samples. Less samples means better performance.")]
         [Range(1f, 50f)]
         protected int RecommendedSamples = 1;
 
         //[Header("PENETRATION")]
-        [SerializeField, Tooltip("The layers that can be penetrated. Anything not selected will stop the projectile as if it had 0 penetration distance. NOTE: PenetrateableLayers should not contain any RicochetableLayers")]
+        [SerializeField, Tooltip("The layers that can be penetrated. Anything not selected will stop the projectile as if it had 0 penetration distance. NOTE: Penetrateable Layers should not contain any Ricochetable Layers")]
         protected LayerMask PenetrateableLayers;
         [SerializeField, Tooltip("Penetration, in Meters. Penetration is X penetration at Y speed, so a loss in speed will reduce effective penetration. If speed is somehow gained, penetration will be increased.")]
         protected float Penetration;
@@ -89,7 +93,7 @@ namespace MBS.ProjectileSystem
 
         //[Header("LIFETIME AND PHYSICS BOUNDS")]
         [SerializeField, Tooltip("The time till this projectile will delete itself")]
-        protected float Lifetime;
+        protected float Lifetime=1;
         [SerializeField, Tooltip("If the projectile speed ever drops lower than this, it will be considered dead. This is useful for when penetration or ricochet cause a projectile to drop to very low speeds. The default is set" +
             " to be about as low as it can go before the projectile starts passing through surfaces. If you have issues, bump it up to .5")]
         protected float MinimumSpeed = .4f;
@@ -107,7 +111,7 @@ namespace MBS.ProjectileSystem
         protected bool EvaluteSeekCurveWithDistance;
 
         //[Header("RICOCHET")]
-        [SerializeField, Tooltip("The layers that can be ricocheted against. Anything not selected will stop the projectile as if it had 0 ricochets. NOTE: RicochetableLayers should not contain any PenetrateableLayers")]
+        [SerializeField, Tooltip("The layers that can be ricocheted against. Anything not selected will stop the projectile as if it had 0 ricochets. NOTE: Ricochetable Layers should not contain any Penetrateable Layers")]
         protected LayerMask RicochetableLayers;
         [SerializeField, Tooltip("The number of times the projectile can ricochet. Generally projectiles do not have ricochet and penetration. If one has both, then ricochet will be ignored.")]
         protected int Ricochets;
@@ -130,7 +134,7 @@ namespace MBS.ProjectileSystem
 
         //[Header("STAGES")]
         [SerializeField, Tooltip("Every Fixedupdate, these stages will be checked to see if conditions are met for them to trigger. They do not have any particular order. To control flow, use Conditions to make sure one stage will" +
-            "trigger before others.")]
+            " trigger before others.")]
         protected List<ProjectileStage> ProjectileStages = new List<ProjectileStage>();
 
         #region Getters
@@ -141,6 +145,8 @@ namespace MBS.ProjectileSystem
         public Vector3 particleSystemRotationOffset { get => ParticleSystemRotationOffset; }
         public AssetReference projectileTrailParticleSystemPrefab { get => ProjectileTrailParticleSystemPrefab; }
         public bool trailObjectPersistsAfterProjectileDies { get => TrailObjectPersistsAfterProjectileDies; }
+
+        public bool clearTrailParticlesOnProjectileDeath { get => ClearTrailParticlesOnProjectileDeath; }
         public ProjectileTag tag { get => Tag; }
 
         public ProjectileMaterialEffectDictionary effectDictionary { get => EffectDictionary; }
@@ -416,6 +422,7 @@ namespace MBS.ProjectileSystem
             public Vector3 ParticleSystemRotationOffset;
             public AssetReference ProjectileTrailParticleSystemPrefab;
             public bool TrailObjectPersistsAfterProjectileDies;
+            public bool ClearTrailParticlesOnProjectileDeath;
             public ProjectileTag Tag;
             public ProjectileMaterialEffectDictionary EffectDictionary;
 
@@ -480,6 +487,7 @@ namespace MBS.ProjectileSystem
                 ParticleSystemRotationOffset = projectile.ParticleSystemRotationOffset;
                 ProjectileTrailParticleSystemPrefab = projectile.ProjectileTrailParticleSystemPrefab;
                 TrailObjectPersistsAfterProjectileDies = projectile.TrailObjectPersistsAfterProjectileDies;
+                ClearTrailParticlesOnProjectileDeath = projectile.ClearTrailParticlesOnProjectileDeath;
                 Tag = projectile.Tag;
                 EffectDictionary = projectile.EffectDictionary;
 

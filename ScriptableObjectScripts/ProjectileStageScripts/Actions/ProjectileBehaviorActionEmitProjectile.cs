@@ -59,7 +59,7 @@ namespace MBS.ProjectileSystem
 
                 if (!proj.DryRun)
                 {
-                    emitter.LaunchSafe(adjustedPos, adjustedDir, proj.SeekData, proj.DryRun, emitData[i].ProjectileSO, LaunchParticles);
+                    emitter.LaunchSafe(adjustedPos, adjustedDir, proj.SeekData, proj.DryRun, emitData[i].ProjectileSO);
                 }
                 else
                 {

@@ -37,7 +37,7 @@ namespace MBS.ProjectileSystem
         public Collider ContainedByCollider;
 
         //ILocalTimeScale values
-        [SerializeField,HideInInspector, Tooltip("The local timescale of this emitter. Any emitted projectiles will inherit the local timescale at the time of emission.")]
+        [SerializeField, HideInInspector, Tooltip("The local timescale of this emitter. Any emitted projectiles will inherit the local timescale at the time of emission.")]
         protected float _localTimeScale = 1;
         /// <summary>
         /// The local timescale of this emitter. Any emitted projectiles will inherit the local timescale at the time of emission.
@@ -278,7 +278,7 @@ namespace MBS.ProjectileSystem
             ParticleSystem trailingParticleSystem = proj.TrailingParticleSystem;
 
             //handle death and particle (and trail gameobject) cleanup.
-            if (!trailingParticleSystem)
+            if (trailingParticleSystem == null)
             {
                 if (!proj.ProjectileBlueprint.trailObjectPersistsAfterProjectileDies)
                 {
@@ -292,10 +292,13 @@ namespace MBS.ProjectileSystem
                 }
             }
 
-            if (!proj.Alive && trailingParticleSystem)
+            if (!proj.Alive && trailingParticleSystem != null)
             {
-
-                trailingParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+                trailingParticleSystem.Stop(true, proj.ProjectileBlueprintInstance.ClearTrailParticlesOnProjectileDeath ? ParticleSystemStopBehavior.StopEmittingAndClear : ParticleSystemStopBehavior.StopEmitting);
+            }
+            if (proj.trailingTrailRenderer != null)
+            {
+                proj.trailingTrailRenderer.Clear();
             }
 
             //Wait till next frame to actually remove the projectile particle
@@ -348,14 +351,14 @@ namespace MBS.ProjectileSystem
         /// <param name="position"></param>
         /// <param name="direction"></param>
         /// <param name="isDryRun"></param>
-        public ActiveProjectile Launch(Vector3 position, Vector3 direction, ProjectileSeekData seekdata = null, bool isDryRun = false, Projectile projectileSO = null, bool noGraphics = false, bool emitMuzzleflashAndAudio = true)
+        public ActiveProjectile Launch(Vector3 position, Vector3 direction, ProjectileSeekData seekdata = null, bool isDryRun = false, Projectile projectileSO = null, bool noGraphics = false, bool emitMuzzleflashAndAudio = true, bool muzzleFlashFXIsChildOfOrigin = true)
         {
             if (!projectileSO)
                 projectileSO = ProjectileSO;
 
             if (projectileSO == null)
             {
-                Debug.LogWarning(gameObject.name+" tried to emit a projectile, but no projectile data has been assign!");
+                Debug.LogWarning(gameObject.name + " tried to emit a projectile, but no projectile data has been assign!");
                 return null;
             }
 
@@ -373,7 +376,7 @@ namespace MBS.ProjectileSystem
             _firstProjectileSpawnFlag = false;
 
             //If we have a particle system attached to this projectile, we will instanciate a new particle to reperesent the projectile. This will also play any "flash" or "launch" effect
-            InstanciateProjectileParticle(proj, emitMuzzleflashAndAudio);
+            InstanciateProjectileParticle(proj, emitMuzzleflashAndAudio, muzzleFlashFXIsChildOfOrigin);
 
             proj.RunDebugCode = DrawDebugLine;
             return proj;
@@ -392,9 +395,9 @@ namespace MBS.ProjectileSystem
         /// <param name="seekdata"></param>
         /// <param name="isDryRun"></param>
         /// <param name="projectileSO"></param>
-        public void LaunchSafe(Vector3 position, Vector3 direction, ProjectileSeekData seekdata = null, bool isDryRun = false, Projectile projectileSO = null, int flashParticleCount = 20)
+        public void LaunchSafe(Vector3 position, Vector3 direction, ProjectileSeekData seekdata = null, bool isDryRun = false, Projectile projectileSO = null)
         {
-            safeLaunchProjectiles.Add(new LaunchData(position, direction, seekdata, isDryRun, projectileSO, flashParticleCount));
+            safeLaunchProjectiles.Add(new LaunchData(position, direction, seekdata, isDryRun, projectileSO));
         }
         protected void HandleLaunchSafe()
         {
@@ -474,7 +477,7 @@ namespace MBS.ProjectileSystem
         /// Used by Launch() to check if we have a particle system, and if so, then to instanciate a new particle for the projectile
         /// </summary>
         /// <param name="proj"></param>
-        private void InstanciateProjectileParticle(ActiveProjectile proj, bool emitFlashAndAudio)
+        private void InstanciateProjectileParticle(ActiveProjectile proj, bool emitFlashAndAudio, bool muzzleFlashFXIsChildOfOrigin)
         {
             if (ProjectileParticleSystem != null)
             {
@@ -521,11 +524,11 @@ namespace MBS.ProjectileSystem
                 if (effectLinkItem == null)
                     return;
                 //emit flash
-                ProjectileOnHitParticleEmitter.SpawnEffect(effectLinkItem.OnEmitParticleEffectPrefab, Origin.position, Origin.forward, Origin);
+                ProjectileOnHitParticleEmitter.SpawnEffect(effectLinkItem.OnEmitParticleEffectPrefab, Origin.position, proj.VelocityNormal, muzzleFlashFXIsChildOfOrigin ? Origin : null);
                 //emit noise
-                ProjectileOnHitParticleEmitter.SpawnEffect(effectLinkItem.OnEmitSoundEffectPrefab, Origin.position, Origin.forward, null, true);
+                ProjectileOnHitParticleEmitter.SpawnEffect(effectLinkItem.OnEmitSoundEffectPrefab, Origin.position, proj.VelocityNormal, null, true);
                 //if(effectLinkItem.OnEmitSoundEffectPrefab.RuntimeKeyIsValid())
-                //  Debug.Log()
+                //Debug.Log(effectLinkItem.OnEmitParticleEffectPrefab.editorAsset.name);
             }
         }
 
@@ -814,8 +817,6 @@ namespace MBS.ProjectileSystem
                 return;
 
             ProjectileOnHitParticleEmitter.SpawnEffect(obj, hit.point, direction, newParent, isNonParticle);
-
-
         }
 
         public void RemoveProjectile(ActiveProjectile proj)
@@ -866,11 +867,12 @@ namespace MBS.ProjectileSystem
         /// <param name="proj"></param>
         protected virtual void OnProjectileDie(RaycastHit hit, ActiveProjectile proj)
         {
-            if (hit.collider != null)
-            {
-                //apply any OnHit particle effects
-                SpawnProjectileEffect(hit, proj, ProjectileEffectType.OnHit);
-            }
+            //This is already handled by Onhit.
+            //if (hit.collider != null)
+            //{
+            //    //apply any OnHit particle effects
+            //    SpawnProjectileEffect(hit, proj, ProjectileEffectType.OnHit);
+            //}
         }
 
         /// <summary>
@@ -905,9 +907,8 @@ namespace MBS.ProjectileSystem
             public ProjectileSeekData Seekdata;
             public bool IsDryRun;
             public Projectile ProjectileSO;
-            public int FlashParticleCount;
 
-            public LaunchData(Vector3 position, Vector3 direction, ProjectileSeekData seekdata = null, bool isDryRun = false, Projectile projectileSO = null, int flashParticleCount = 20)
+            public LaunchData(Vector3 position, Vector3 direction, ProjectileSeekData seekdata = null, bool isDryRun = false, Projectile projectileSO = null)
             {
                 Position = position;
                 Direction = direction;
@@ -915,7 +916,6 @@ namespace MBS.ProjectileSystem
                 Seekdata = seekdata;
                 IsDryRun = isDryRun;
                 ProjectileSO = projectileSO;
-                FlashParticleCount = flashParticleCount;
             }
 
         }

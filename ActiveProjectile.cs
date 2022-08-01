@@ -117,6 +117,7 @@ namespace MBS.ProjectileSystem
         public GameObject TrailingGameobject; //This is a reference to a trailing gameobject. Useful for represeting the projectile with a gameobject.
         public ParticleSystem TrailingParticleSystem; //This is a reference to a trailing particle system. Useful for smoke, or other advanced particles.
         public Animator TrailingAnimator; //This is a reference to a trailing animator. Useful for large and very complicated projectiles, such as multi-compartments spinning drills or whatnot
+        public TrailRenderer trailingTrailRenderer;//This is a reference to a trailRenderer. Useful for many projectiles, and needs to cleared on death, so it can be repositioned when pooled.
 
         public List<Projectile.ProjectileStage> Stages; //A list of the stages this projectile may change to
 
@@ -291,6 +292,7 @@ namespace MBS.ProjectileSystem
             TrailingGameobject = proj.TrailingGameobject;
             TrailingParticleSystem = proj.TrailingParticleSystem;
             TrailingAnimator = proj.TrailingAnimator;
+            trailingTrailRenderer = proj.trailingTrailRenderer;
 
             Stages = proj.Stages;
 
@@ -1096,25 +1098,27 @@ namespace MBS.ProjectileSystem
             TrailingGameobject = trailObj;
             TrailingParticleSystem = TrailingGameobject.GetComponentInChildren<ParticleSystem>();
             TrailingAnimator = TrailingGameobject.GetComponentInChildren<Animator>();
+            trailingTrailRenderer=TrailingGameobject.GetComponentInChildren<TrailRenderer>();
 
-            if (TrailingParticleSystem)
+            if (TrailingParticleSystem!=null)
             {
                 TrailingParticleSystem.gameObject.transform.position = pos;
                 MainModule main = TrailingParticleSystem.main;
                 main.simulationSpeed = LocalTimescaleValue;
             }
 
-            if (TrailingAnimator)
+            if (TrailingAnimator!=null)
             {
                 TrailingAnimator.speed = LocalTimescaleValue;
             }
 
-            if (TrailingGameobject)
+            if (TrailingGameobject!=null)
             {
                 TrailingGameobject.transform.position = pos;
                 TrailingGameobject.transform.rotation = Quaternion.Euler(TrailingGameobject.transform.rotation.eulerAngles + ProjectileBlueprintInstance.ParticleSystemRotationOffset);
                 TrailingGameobject.SetActive(true);
             }
+            
         }
 
         public void KillProjectile(bool AllowOnDeathStages)

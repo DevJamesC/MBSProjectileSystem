@@ -17,6 +17,7 @@ namespace MBS.ProjectileSystem
         SerializedProperty ParticleSystemRotationOffset;
         SerializedProperty ProjectileTrailParticleSystemPrefab;
         SerializedProperty TrailObjectPersistsAfterProjectileDies;
+        SerializedProperty ClearTrailParticlesOnProjectileDeath;
         SerializedProperty Tag;
         SerializedProperty EffectDictionary;
         //Speed, Drag, Gravity
@@ -88,6 +89,7 @@ namespace MBS.ProjectileSystem
             ParticleSystemRotationOffset = serializedObject.FindProperty("ParticleSystemRotationOffset");
             ProjectileTrailParticleSystemPrefab = serializedObject.FindProperty("ProjectileTrailParticleSystemPrefab");
             TrailObjectPersistsAfterProjectileDies = serializedObject.FindProperty("TrailObjectPersistsAfterProjectileDies");
+            ClearTrailParticlesOnProjectileDeath= serializedObject.FindProperty("ClearTrailParticlesOnProjectileDeath");
             Tag = serializedObject.FindProperty("Tag");
             EffectDictionary = serializedObject.FindProperty("EffectDictionary");
             //Speed, Drag, Gravity
@@ -152,6 +154,7 @@ namespace MBS.ProjectileSystem
                 EditorGUILayout.PropertyField(ParticleSystemRotationOffset);
                 EditorGUILayout.PropertyField(ProjectileTrailParticleSystemPrefab);
                 EditorGUILayout.PropertyField(TrailObjectPersistsAfterProjectileDies);
+                EditorGUILayout.PropertyField(ClearTrailParticlesOnProjectileDeath);
                 EditorGUILayout.PropertyField(Tag);
                 EditorGUILayout.PropertyField(EffectDictionary);
                 CustomEditorTools.DrawUILine(Color.gray);
@@ -186,7 +189,7 @@ namespace MBS.ProjectileSystem
             if (showPathingSettings)
             {
                 MBSAnimationCurve initalPathYVal= ProjectilePathY.GetValue<MBSAnimationCurve>();
-                MBSAnimationCurve pathYval = CustomEditorTools.DrawMBSAnimationCurve("Path Y", initalPathYVal, serializedObject);
+                MBSAnimationCurve pathYval = CustomEditorTools.DrawMBSAnimationCurve("Path Y", initalPathYVal, serializedObject, "The change in path that the bullet has over distance. This can be used (usually with PathsAreRelative=true) to make bullet Drop");
                 ProjectilePathY.SetValue(pathYval);
                 MBSAnimationCurve initalPathXVal = ProjectilePathX.GetValue<MBSAnimationCurve>();
                 MBSAnimationCurve pathXval = CustomEditorTools.DrawMBSAnimationCurve("Path X", initalPathXVal, serializedObject);
@@ -226,7 +229,7 @@ namespace MBS.ProjectileSystem
             if (showSeekingSettings)
             {
                 MBSAnimationCurve initalSeekVal = SeekTurnAmount.GetValue<MBSAnimationCurve>();
-                MBSAnimationCurve seekVal = CustomEditorTools.DrawMBSAnimationCurve("Path X", initalSeekVal, serializedObject);
+                MBSAnimationCurve seekVal = CustomEditorTools.DrawMBSAnimationCurve("SeekTurnAmount", initalSeekVal, serializedObject, "The degrees per second the projectile can turn to orient towards a target");
                 SeekTurnAmount.SetValue(seekVal);
                 if (serializedObject.targetObjects.Length > 1)
                     EditorGUILayout.LabelField("Multi Editing animation curves is not supported! \n You are currently only editing the topmost selected object!", GUILayout.Height(30));
