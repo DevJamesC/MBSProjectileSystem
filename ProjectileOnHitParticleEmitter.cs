@@ -61,7 +61,8 @@ public class ProjectileOnHitParticleEmitter : MBSSingleton<ProjectileOnHitPartic
     /// <param name="position"></param>
     /// <param name="direction"></param>
     /// <param name="newParent"></param>
-    public static void SpawnEffect(AssetReference assetReference, Vector3 position, Vector3 direction, Transform newParent = null, bool nonParticleSysEffect = false)
+    /// <param name="scene">Leave blank to indicate the active scene</param>
+    public static void SpawnEffect(AssetReference assetReference, Vector3 position, Vector3 direction, Transform newParent = null, bool nonParticleSysEffect = false, string scene = "")
     {
 
         if (!assetReference.RuntimeKeyIsValid())
@@ -83,7 +84,7 @@ public class ProjectileOnHitParticleEmitter : MBSSingleton<ProjectileOnHitPartic
             return;
         }
 
-        MBSSimpleAddressablePooler pooler = MBSSimpleAddressablePooler.GetInstanceOrInstanciate(assetReference);
+        MBSSimpleAddressablePooler pooler = MBSSimpleAddressablePooler.GetInstanceOrInstanciate(assetReference, scene);
         if (pooler != null)
         {
             GameObjectOrHandle<GameObject> pooledObject = pooler.GetPooledGameObject();

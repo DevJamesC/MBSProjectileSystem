@@ -19,6 +19,8 @@ namespace MBS.ProjectileSystem
         SerializedProperty ProjectileInheritsEmitterVelocity;
         SerializedProperty Origin;
         SerializedProperty interpolateProjectilePosition;
+        SerializedProperty FXScene;
+        SerializedProperty AudioScene;
         //Debug
         SerializedProperty DrawDebugLine;
         SerializedProperty DebugInAirColor;
@@ -39,6 +41,8 @@ namespace MBS.ProjectileSystem
             ProjectileInheritsEmitterVelocity = serializedObject.FindProperty("ProjectileInheritsEmitterVelocity");
             Origin = serializedObject.FindProperty("Origin");
             interpolateProjectilePosition = serializedObject.FindProperty("interpolateProjectilePosition");
+            FXScene = serializedObject.FindProperty("FXScene");
+            AudioScene = serializedObject.FindProperty("AudioScene");
             DrawDebugLine = serializedObject.FindProperty("DrawDebugLine");
             DebugInAirColor = serializedObject.FindProperty("DebugInAirColor");
             DebugInObjectColor = serializedObject.FindProperty("DebugInObjectColor");
@@ -63,7 +67,8 @@ namespace MBS.ProjectileSystem
             EditorGUILayout.PropertyField(ProjectileInheritsEmitterVelocity, new GUIContent("Inherit Emitter Velocity"));
             EditorGUILayout.PropertyField(LocalTimescaleValue);
             EditorGUILayout.PropertyField(LocalGravityValue);
-
+            EditorGUILayout.PropertyField(FXScene);
+            EditorGUILayout.PropertyField(AudioScene);
 
             EditorGUILayout.PropertyField(DrawDebugLine);
             if (DrawDebugLine.boolValue)

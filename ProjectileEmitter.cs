@@ -25,6 +25,10 @@ namespace MBS.ProjectileSystem
         public Transform Origin;
         [Tooltip("Wiether projectiles interpolate their positions between FixedUpdates. Profiling resulted in a trivial performace cost... maybe. The cost is so small it might not exist.")]
         public bool interpolateProjectilePosition = true;
+        [Tooltip("If you want FX objects to spawn in a difference scene than the active one, specify here. Leave blank to indicate spawning FX objects in the active scene.")]
+        public string FXScene = "";
+        [Tooltip("If you want audio objects to spawn in a difference scene than the active one, specify here. Leave blank to indicate spawning sound objects in the active scene.")]
+        public string AudioScene = "";
         [Tooltip("Enable this to draw a debug line every FixedUpdate from the last position to the new position for each projectile emitted from this emitter.")]
         public bool DrawDebugLine;
         [Tooltip("The Projectile debug line color while it is not penetrating an object.")]
@@ -524,9 +528,9 @@ namespace MBS.ProjectileSystem
                 if (effectLinkItem == null)
                     return;
                 //emit flash
-                ProjectileOnHitParticleEmitter.SpawnEffect(effectLinkItem.OnEmitParticleEffectPrefab, Origin.position, proj.VelocityNormal, muzzleFlashFXIsChildOfOrigin ? Origin : null);
+                ProjectileOnHitParticleEmitter.SpawnEffect(effectLinkItem.OnEmitParticleEffectPrefab, Origin.position, proj.VelocityNormal, muzzleFlashFXIsChildOfOrigin ? Origin : null,false,FXScene);
                 //emit noise
-                ProjectileOnHitParticleEmitter.SpawnEffect(effectLinkItem.OnEmitSoundEffectPrefab, Origin.position, proj.VelocityNormal, null, true);
+                ProjectileOnHitParticleEmitter.SpawnEffect(effectLinkItem.OnEmitSoundEffectPrefab, Origin.position, proj.VelocityNormal, null, true, AudioScene);
                 //if(effectLinkItem.OnEmitSoundEffectPrefab.RuntimeKeyIsValid())
                 //Debug.Log(effectLinkItem.OnEmitParticleEffectPrefab.editorAsset.name);
             }
@@ -771,7 +775,7 @@ namespace MBS.ProjectileSystem
             this.MBSEventStopListening<ProjectileEvent>();
         }
 
-        public static void SpawnProjectileEffect(RaycastHit hit, ActiveProjectile proj, ProjectileEffectType type, Transform newParent = null, MaterialTag tag = null)
+        public static void SpawnProjectileEffect(RaycastHit hit, ActiveProjectile proj, ProjectileEffectType type, Transform newParent = null, MaterialTag tag = null,string fxScene="",string audioScene="")
         {
             //apply any OnHit particle effects
             MaterialToughness matToughness = hit.collider.gameObject.GetComponentInParent<MaterialToughness>();
@@ -784,39 +788,46 @@ namespace MBS.ProjectileSystem
             Vector3 direction = Vector3.Lerp(hit.normal, proj.VelocityNormal, effectLinkItem.OnHitParticleSlantTowardsHitVelocity);
             AssetReference obj = null;
             bool isNonParticle = false;
+            string targetScene = "";
             switch (type)
             {
                 case ProjectileEffectType.OnHit:
                     obj = effectLinkItem.OnHitParticleEffectPrefab;
+                    targetScene = fxScene;
                     break;
                 case ProjectileEffectType.BulletMark:
                     obj = effectLinkItem.BulletMarkParticleEffectPrefab;
                     direction = hit.normal;
+                    targetScene = fxScene;
                     break;
                 case ProjectileEffectType.BulletHole:
                     obj = effectLinkItem.BulletHoleParticleEffectPrefab;
                     direction = hit.normal;
+                    targetScene = fxScene;
                     break;
                 case ProjectileEffectType.BulletHolePenetration:
                     obj = effectLinkItem.BulletHolePenetrationParticleEffectPrefab;
                     direction = hit.normal;
+                    targetScene = fxScene;
                     break;
                 case ProjectileEffectType.OnHitAudio:
                     obj = effectLinkItem.OnHitSoundEffectPrefab;
                     direction = hit.normal;
                     isNonParticle = true;
+                    targetScene = audioScene;
                     break;
                 case ProjectileEffectType.NearMissAudio:
                     obj = effectLinkItem.OnNearMissSoundEffectPrefab;
                     direction = hit.normal;
                     isNonParticle = true;
+                    targetScene = audioScene;
                     break;
             }
 
             if (obj == null)
                 return;
 
-            ProjectileOnHitParticleEmitter.SpawnEffect(obj, hit.point, direction, newParent, isNonParticle);
+            ProjectileOnHitParticleEmitter.SpawnEffect(obj, hit.point, direction, newParent, isNonParticle, targetScene);
         }
 
         public void RemoveProjectile(ActiveProjectile proj)
@@ -833,8 +844,8 @@ namespace MBS.ProjectileSystem
         {
             MaterialTag tag = MaterialTagComponent.GetMaterialTagByCollider(hit.collider);
             //apply any OnHit particle effects
-            SpawnProjectileEffect(hit, proj, ProjectileEffectType.OnHit, null, tag);
-            SpawnProjectileEffect(hit, proj, ProjectileEffectType.OnHitAudio, null, tag);
+            SpawnProjectileEffect(hit, proj, ProjectileEffectType.OnHit, null, tag, FXScene, AudioScene);
+            SpawnProjectileEffect(hit, proj, ProjectileEffectType.OnHitAudio, null, tag, FXScene,AudioScene);
         }
 
         protected virtual void OnHitTrigger(RaycastHit hit, ActiveProjectile proj)
@@ -847,15 +858,15 @@ namespace MBS.ProjectileSystem
                 if (nearMiss != null)
                 {
                     hitNearMiss = true;
-                    SpawnProjectileEffect(hit, proj, ProjectileEffectType.NearMissAudio, null, nearMiss.materialTagComp.materialTag);
+                    SpawnProjectileEffect(hit, proj, ProjectileEffectType.NearMissAudio, null, nearMiss.materialTagComp.materialTag, FXScene, AudioScene);
                 }
             }
 
             if (!hitNearMiss)
             {
                 MaterialTag tag = MaterialTagComponent.GetMaterialTagByCollider(hit.collider);
-                SpawnProjectileEffect(hit, proj, ProjectileEffectType.OnHit, null, tag);
-                SpawnProjectileEffect(hit, proj, ProjectileEffectType.OnHitAudio, null, tag);
+                SpawnProjectileEffect(hit, proj, ProjectileEffectType.OnHit, null, tag, FXScene, AudioScene);
+                SpawnProjectileEffect(hit, proj, ProjectileEffectType.OnHitAudio, null, tag, FXScene, AudioScene);
             }
 
         }
@@ -883,20 +894,20 @@ namespace MBS.ProjectileSystem
         protected virtual void OnProjectileRicochet(RaycastHit hit, ActiveProjectile proj)
         {
             //apply any OnHit particle effects
-            SpawnProjectileEffect(hit, proj, ProjectileEffectType.BulletMark, hit.collider.transform);
+            SpawnProjectileEffect(hit, proj, ProjectileEffectType.BulletMark, hit.collider.transform,null, FXScene, AudioScene);
         }
 
         protected virtual void OnProjectilePenetrationStart(RaycastHit hit, ActiveProjectile proj)
         {
             //apply any OnHit particle effects
-            SpawnProjectileEffect(hit, proj, ProjectileEffectType.BulletHolePenetration, hit.collider.transform);
+            SpawnProjectileEffect(hit, proj, ProjectileEffectType.BulletHolePenetration, hit.collider.transform, null, FXScene, AudioScene);
         }
 
         protected virtual void OnProjectilePenetrationExit(RaycastHit hit, ActiveProjectile proj)
         {
             //apply any OnHit particle effects
-            SpawnProjectileEffect(hit, proj, ProjectileEffectType.BulletHolePenetration, hit.collider.transform);
-            SpawnProjectileEffect(hit, proj, ProjectileEffectType.OnHit);
+            SpawnProjectileEffect(hit, proj, ProjectileEffectType.BulletHolePenetration, hit.collider.transform, null, FXScene, AudioScene);
+            SpawnProjectileEffect(hit, proj, ProjectileEffectType.OnHit,null, null, FXScene, AudioScene);
         }
 
 

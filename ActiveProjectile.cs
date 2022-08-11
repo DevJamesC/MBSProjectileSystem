@@ -189,7 +189,7 @@ namespace MBS.ProjectileSystem
                 //Instanciate projectile trail (using object pooling)
                 if (ProjectileBlueprint.projectileTrailParticleSystemPrefab != null)
                 {
-                    MBSSimpleAddressablePooler pooler = MBSSimpleAddressablePooler.GetInstanceOrInstanciate(ProjectileBlueprint.projectileTrailParticleSystemPrefab);
+                    MBSSimpleAddressablePooler pooler = MBSSimpleAddressablePooler.GetInstanceOrInstanciate(ProjectileBlueprint.projectileTrailParticleSystemPrefab,"");
                     if (pooler != null)
                     {
                         GameObjectOrHandle<GameObject> trail = pooler.GetPooledGameObject();

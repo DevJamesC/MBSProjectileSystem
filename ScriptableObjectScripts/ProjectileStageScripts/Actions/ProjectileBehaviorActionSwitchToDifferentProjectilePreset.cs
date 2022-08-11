@@ -100,7 +100,7 @@ namespace MBS.ProjectileSystem
             {
                 if (proj.ProjectileBlueprint.projectileTrailParticleSystemPrefab != ProjectileBaseToChangeTo.projectileTrailParticleSystemPrefab)//If our current trail and our new trail are not the same
                 {
-                    MBSSimpleAddressablePooler pooler = MBSSimpleAddressablePooler.GetInstanceOrInstanciate(ProjectileBaseToChangeTo.projectileTrailParticleSystemPrefab);
+                    MBSSimpleAddressablePooler pooler = MBSSimpleAddressablePooler.GetInstanceOrInstanciate(ProjectileBaseToChangeTo.projectileTrailParticleSystemPrefab,"");
                     if (pooler != null)
                     {
                         GameObjectOrHandle<GameObject> trail = pooler.GetPooledGameObject();
