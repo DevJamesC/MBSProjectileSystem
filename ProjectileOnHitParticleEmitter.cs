@@ -87,27 +87,31 @@ public class ProjectileOnHitParticleEmitter : MBSSingleton<ProjectileOnHitPartic
         MBSSimpleAddressablePooler pooler = MBSSimpleAddressablePooler.GetInstanceOrInstanciate(assetReference, scene);
         if (pooler != null)
         {
-            GameObjectOrHandle<GameObject> pooledObject = pooler.GetPooledGameObject();
-
-            if (pooledObject == null)
-                return;
-
-            if (pooledObject.IsEmpty())
-                return;
-
-            //If we have a pooled object already instanciated, then use it to spawn the effect
-            if (pooledObject.Object != null)
+            pooler.GetPooledGameObject((gameObject) => 
             {
-                ApplyManipulationToEffectObj(pooledObject.Object, position, direction, newParent, nonParticleSysEffect);
+                ApplyManipulationToEffectObj(gameObject, position, direction, newParent, nonParticleSysEffect);
+            });
 
-            }
-            else if (!pooledObject.IsEmpty())
-            { //else if we will have a pooled object once it finishes instanciating asyncrounously, set it to spawn the effect once it appears
-                pooledObject.Handle.Completed += (asyncOperationHandle) =>
-                    {
-                        ApplyManipulationToEffectObj(asyncOperationHandle.Result as GameObject, position, direction, newParent, nonParticleSysEffect);
-                    };
-            }
+            //JACRESC 9/19/2022
+            //if (pooledObject == null)
+            //    return;
+
+            //if (pooledObject.IsEmpty())
+            //    return;
+
+            ////If we have a pooled object already instanciated, then use it to spawn the effect
+            //if (pooledObject.Object != null)
+            //{
+            //    ApplyManipulationToEffectObj(pooledObject.Object, position, direction, newParent, nonParticleSysEffect);
+
+            //}
+            //else if (!pooledObject.IsEmpty())
+            //{ //else if we will have a pooled object once it finishes instanciating asyncrounously, set it to spawn the effect once it appears
+            //    pooledObject.Handle.Completed += (asyncOperationHandle) =>
+            //        {
+            //            ApplyManipulationToEffectObj(asyncOperationHandle.Result as GameObject, position, direction, newParent, nonParticleSysEffect);
+            //        };
+            //}
         }
 
     }

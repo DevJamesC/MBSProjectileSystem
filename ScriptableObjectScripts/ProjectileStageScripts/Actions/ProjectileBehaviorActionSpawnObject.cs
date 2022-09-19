@@ -34,45 +34,50 @@ namespace MBS.ProjectileSystem
                 MBSSimpleAddressablePooler pooler = MBSSimpleAddressablePooler.GetInstanceOrInstanciate(AddressableToSpawn,"");
                 if (pooler != null)
                 {
-                    GameObjectOrHandle<GameObject> obj = pooler.GetPooledGameObject();
-                    if (!obj.IsEmpty())
+                    pooler.GetPooledGameObject((gameObject) => 
                     {
-                        if (obj.Object != null)
-                        {
-                            SpawnPrefab(proj, obj.Object);
-                        }
-                        else if (obj.IsLoadingHandle())//If we have a handle telling us when the asset has been loaded into memory (but not yet started to instanciate)...
-                        {
-                            ActiveProjectile projClone = new ActiveProjectile(proj);
-                            obj.Handle.Completed += (asyncOperationHandle) =>
-                            {
-                                GameObjectOrHandle<GameObject> obj = pooler.GetPooledGameObject();
-                                if (!obj.IsEmpty())
-                                {
-                                    if (obj.Object != null)
-                                    {
-                                        SpawnPrefab(projClone, obj.Object);
-                                    }
-                                    else
-                                    {
-                                        obj.Handle.Completed += (asyncOpnHandle) =>
-                                        {
-                                            SpawnPrefab(projClone, asyncOpnHandle.Result as GameObject);
-                                        };
-                                    }
-                                }
+                        SpawnPrefab(proj, gameObject);
+                    });
 
-                            };
-                        }
-                        else//If we have a handle telling us when the asset has been instanciated...
-                        {
-                            ActiveProjectile projClone = new ActiveProjectile(proj);
-                            obj.Handle.Completed += (asyncOperationHandle) =>
-                                {
-                                    SpawnPrefab(projClone, asyncOperationHandle.Result as GameObject);
-                                };
-                        }
-                    }
+                    //JACRESC 9/19/2022
+                    //if (!obj.IsEmpty())
+                    //{
+                    //    if (obj.Object != null)
+                    //    {
+                    //        SpawnPrefab(proj, obj.Object);
+                    //    }
+                    //    else if (obj.IsLoadingHandle())//If we have a handle telling us when the asset has been loaded into memory (but not yet started to instanciate)...
+                    //    {
+                    //        ActiveProjectile projClone = new ActiveProjectile(proj);
+                    //        obj.Handle.Completed += (asyncOperationHandle) =>
+                    //        {
+                    //            GameObjectOrHandle<GameObject> obj = pooler.GetPooledGameObject();
+                    //            if (!obj.IsEmpty())
+                    //            {
+                    //                if (obj.Object != null)
+                    //                {
+                    //                    SpawnPrefab(projClone, obj.Object);
+                    //                }
+                    //                else
+                    //                {
+                    //                    obj.Handle.Completed += (asyncOpnHandle) =>
+                    //                    {
+                    //                        SpawnPrefab(projClone, asyncOpnHandle.Result as GameObject);
+                    //                    };
+                    //                }
+                    //            }
+
+                    //        };
+                    //    }
+                    //    else//If we have a handle telling us when the asset has been instanciated...
+                    //    {
+                    //        ActiveProjectile projClone = new ActiveProjectile(proj);
+                    //        obj.Handle.Completed += (asyncOperationHandle) =>
+                    //            {
+                    //                SpawnPrefab(projClone, asyncOperationHandle.Result as GameObject);
+                    //            };
+                    //    }
+                    //}
 
                 }
             }

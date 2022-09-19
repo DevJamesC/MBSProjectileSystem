@@ -431,34 +431,40 @@ namespace MBS.ProjectileSystem
                 //Set up the projectile particle system
                 if (ProjectileSO.projectileParticleSystemPrefab.RuntimeKeyIsValid())
                 {
-                    if (SpawnAddressable.AssetIsLoaded(ProjectileSO.projectileParticleSystemPrefab))
+                    InstanciateAddressableReference.Instanciate(ProjectileSO.projectileParticleSystemPrefab, (gameObject) => 
                     {
-                        isSpawningProjectileGraphicHandle = SpawnAddressable.Spawn(ProjectileSO.projectileParticleSystemPrefab, gameObject.transform);
-                        isSpawningProjectileGraphicHandle.Completed += (asyncOperationHandle) =>
-                        {
-                            GameObject obj = asyncOperationHandle.Result as GameObject;
-                            ProjectileParticleSystem = obj.GetComponent<ParticleSystem>();
-                            lastParticleSystem = ProjectileParticleSystem;
-                        };
-                    }
-                    else
-                    {
-                        AsyncOperationHandle handle = SpawnAddressable.LoadAsset(ProjectileSO.projectileParticleSystemPrefab);
-                        handle.Completed += (asyncOperationHandle) =>
-                        {
-                            if (this != null)
-                            {
-                                AsyncOperationHandle h = SpawnAddressable.Spawn(ProjectileSO.projectileParticleSystemPrefab, gameObject.transform);
-                                h.Completed += (asyncOpHandle) =>
-                                {
-                                    GameObject obj = asyncOpHandle.Result as GameObject;
-                                    ProjectileParticleSystem = obj.GetComponent<ParticleSystem>();
-                                    lastParticleSystem = ProjectileParticleSystem;
-                                };
-                            }
+                        ProjectileParticleSystem = gameObject.GetComponent<ParticleSystem>();
+                        lastParticleSystem = ProjectileParticleSystem;
+                    });
 
-                        };
-                    }
+                    //if (SpawnAddressable.AssetIsLoaded(ProjectileSO.projectileParticleSystemPrefab))
+                    //{
+                        
+                    //    isSpawningProjectileGraphicHandle.Completed += (asyncOperationHandle) =>
+                    //    {
+                    //        GameObject obj = asyncOperationHandle.Result as GameObject;
+                    //        ProjectileParticleSystem = obj.GetComponent<ParticleSystem>();
+                    //        lastParticleSystem = ProjectileParticleSystem;
+                    //    };
+                    //}
+                    //else
+                    //{
+                    //    AsyncOperationHandle handle = SpawnAddressable.LoadAsset(ProjectileSO.projectileParticleSystemPrefab);
+                    //    handle.Completed += (asyncOperationHandle) =>
+                    //    {
+                    //        if (this != null)
+                    //        {
+                    //            AsyncOperationHandle h = SpawnAddressable.Spawn(ProjectileSO.projectileParticleSystemPrefab, gameObject.transform);
+                    //            h.Completed += (asyncOpHandle) =>
+                    //            {
+                    //                GameObject obj = asyncOpHandle.Result as GameObject;
+                    //                ProjectileParticleSystem = obj.GetComponent<ParticleSystem>();
+                    //                lastParticleSystem = ProjectileParticleSystem;
+                    //            };
+                    //        }
+
+                    //    };
+                    //}
 
 
                 }

@@ -103,44 +103,48 @@ namespace MBS.ProjectileSystem
                     MBSSimpleAddressablePooler pooler = MBSSimpleAddressablePooler.GetInstanceOrInstanciate(ProjectileBaseToChangeTo.projectileTrailParticleSystemPrefab,"");
                     if (pooler != null)
                     {
-                        GameObjectOrHandle<GameObject> trail = pooler.GetPooledGameObject();
-                        if (!trail.IsEmpty())
+                        pooler.GetPooledGameObject((gameObject) => 
                         {
-                            if (trail.Object != null)//If we have a gameobject
-                            {
-                                proj.SetUpTrailingGameObject(trail.Object, proj.Position);
-                            }
-                            else if (trail.IsLoadingHandle())
-                            {
-                                trail.Handle.Completed += (asyncOperationHandle) =>
-                                {
-                                    if (proj == null)
-                                        return;
-                                    GameObjectOrHandle<GameObject> trailObj = pooler.GetPooledGameObject();
-                                    if (!trailObj.IsEmpty())
-                                    {
-                                        if (trailObj.Object != null)
-                                        {
-                                            proj.SetUpTrailingGameObject(trailObj.Object, proj.Position);
-                                        }
-                                        else
-                                        {
-                                            trailObj.Handle.Completed += (asyncOpHandle) =>
-                                            {
-                                                proj.SetUpTrailingGameObject(asyncOpHandle.Result as GameObject, proj.Position);
-                                            };
-                                        }
-                                    }
-                                };
-                            }
-                            else
-                            {
-                                trail.Handle.Completed += (asyncOperationHandle) =>
-                                {
-                                    proj.SetUpTrailingGameObject(asyncOperationHandle.Result as GameObject, proj.Position);
-                                };
-                            }
-                        }
+                            proj.SetUpTrailingGameObject(gameObject, proj.Position);
+                        });
+
+                        //if (!trail.IsEmpty())
+                        //{
+                        //    if (trail.Object != null)//If we have a gameobject
+                        //    {
+                        //        proj.SetUpTrailingGameObject(trail.Object, proj.Position);
+                        //    }
+                        //    else if (trail.IsLoadingHandle())
+                        //    {
+                        //        trail.Handle.Completed += (asyncOperationHandle) =>
+                        //        {
+                        //            if (proj == null)
+                        //                return;
+                        //            GameObjectOrHandle<GameObject> trailObj = pooler.GetPooledGameObject();
+                        //            if (!trailObj.IsEmpty())
+                        //            {
+                        //                if (trailObj.Object != null)
+                        //                {
+                        //                    proj.SetUpTrailingGameObject(trailObj.Object, proj.Position);
+                        //                }
+                        //                else
+                        //                {
+                        //                    trailObj.Handle.Completed += (asyncOpHandle) =>
+                        //                    {
+                        //                        proj.SetUpTrailingGameObject(asyncOpHandle.Result as GameObject, proj.Position);
+                        //                    };
+                        //                }
+                        //            }
+                        //        };
+                        //    }
+                        //    else
+                        //    {
+                        //        trail.Handle.Completed += (asyncOperationHandle) =>
+                        //        {
+                        //            proj.SetUpTrailingGameObject(asyncOperationHandle.Result as GameObject, proj.Position);
+                        //        };
+                        //    }
+                        //}
                     }
 
 
