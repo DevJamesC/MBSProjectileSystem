@@ -289,7 +289,9 @@ namespace MBS.ProjectileSystem
             [HideInInspector]
             public string name = "block";
             public StageFlowType BlockType;
-            [Tooltip("Every fixedupdate, all the scripts placed here will be called to check if the projectile trigger has been met. If any of the conditions are met, this stage will trigger.")]
+            [Tooltip("Every fixedupdate, all the scripts placed here will be called to check if the projectile trigger has been met. If any of the conditions are met, this stage will trigger. " +
+                "To create persistent functionality (such as a projectile that sticks X height above the terrain at all times), create a condition that executes logic. This pattern may change " +
+                "when the projectile system is remastered in the future.")]
             public List<ProjectileBehaviorCondition> Conditions;
             [Tooltip("When this stage starts, every script placed here will execute.")]
             public List<ProjectileBehaviorAction> Actions;
