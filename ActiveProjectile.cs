@@ -189,10 +189,10 @@ namespace MBS.ProjectileSystem
                 //Instanciate projectile trail (using object pooling)
                 if (ProjectileBlueprint.projectileTrailParticleSystemPrefab != null)
                 {
-                    MBSSimpleAddressablePooler pooler = MBSSimpleAddressablePooler.GetInstanceOrInstanciate(ProjectileBlueprint.projectileTrailParticleSystemPrefab,Emitter.FXScene);
+                    MBSSimpleAddressablePooler pooler = MBSSimpleAddressablePooler.GetInstanceOrInstanciate(ProjectileBlueprint.projectileTrailParticleSystemPrefab, Emitter.FXScene);
                     if (pooler != null)
                     {
-                        pooler.GetPooledGameObject((gameObject) => 
+                        pooler.GetPooledGameObject((gameObject) =>
                         {
                             SetUpTrailingGameObject(gameObject, _position);
                         });
@@ -256,7 +256,7 @@ namespace MBS.ProjectileSystem
         public ActiveProjectile(ActiveProjectile proj)
         {
             ProjectileBlueprint = proj.ProjectileBlueprint;
-            ProjectileBlueprintInstance=proj.ProjectileBlueprintInstance;
+            ProjectileBlueprintInstance = proj.ProjectileBlueprintInstance;
             Emitter = proj.Emitter;
             AtmosphereData = proj.AtmosphereData;
             Alive = proj.Alive;
@@ -346,7 +346,7 @@ namespace MBS.ProjectileSystem
             }
 
             //Get any speed change determined by the Projectile SO 
-            float speedEval = ProjectileBlueprintInstance.Speed.Evaluate(ProjectileBlueprintInstance.EvaluateSpeedWithDistance ? LifetimeDistance-DistanceStageOffset : CurrentTimeAlive-LifetimeStageOffset);
+            float speedEval = ProjectileBlueprintInstance.Speed.Evaluate(ProjectileBlueprintInstance.EvaluateSpeedWithDistance ? LifetimeDistance - DistanceStageOffset : CurrentTimeAlive - LifetimeStageOffset);
             float magnitude = (Velocity.magnitude + (speedEval - EvaluatedSpeed));
             float initalMagnitude = magnitude;
             magnitude *= percentTimeAlive;
@@ -450,12 +450,12 @@ namespace MBS.ProjectileSystem
                         ApplySlowdown(deltaTime, material, ref workingVelocity, initalMagnitude * Mathf.Lerp(.7f, 1, percentTimeAlive));
                         magnitude = workingVelocity.magnitude;
                         slowdown -= magnitude;
-                        
+
 
                         //then add back gravity, paths and seeking
                         //If we will not be using our paths for gravity, apply paths
                         //if (ProjectileBlueprintInstance.gravityOption == Projectile.ProjectileGravityMode.NoGravity || ProjectileBlueprintInstance.gravityOption == Projectile.ProjectileGravityMode.Gravity)
-                            //velocityPathsDiff = AddPaths(magnitude, ref workingVelocity, ref workingVelocityNormal, recursionData);
+                        //velocityPathsDiff = AddPaths(magnitude, ref workingVelocity, ref workingVelocityNormal, recursionData);
                         //Add gravity
                         gravDiff = AddGravity(deltaTime, ref workingVelocity, ref workingVelocityNormal, recursionData);
                         //Add seeking
@@ -524,11 +524,11 @@ namespace MBS.ProjectileSystem
                     slowdown = workingVelocity.magnitude;
                     ApplySlowdown(deltaTime, material, ref workingVelocity, initalMagnitude);
                     magnitude = workingVelocity.magnitude;
-                    slowdown -= magnitude;                   
+                    slowdown -= magnitude;
                     //then add back gravity, paths and seeking
                     //If we will not be using our paths for gravity, apply paths
                     //if (ProjectileBlueprintInstance.gravityOption == Projectile.ProjectileGravityMode.NoGravity || ProjectileBlueprintInstance.gravityOption == Projectile.ProjectileGravityMode.Gravity)
-                        //velocityPathsDiff = AddPaths(magnitude, ref workingVelocity, ref workingVelocityNormal, recursionData);
+                    //velocityPathsDiff = AddPaths(magnitude, ref workingVelocity, ref workingVelocityNormal, recursionData);
                     //Add gravity
                     gravDiff = AddGravity(deltaTime, ref workingVelocity, ref workingVelocityNormal, recursionData);
                     //Add seeking
@@ -853,7 +853,7 @@ namespace MBS.ProjectileSystem
         private Vector3 AddPaths(float magnitude, ref Vector3 workingVelocity, ref Vector3 workingVelocityNormal, MoveRecursionData recursionData = null)
         {
             //Get pathing data
-            Vector3 paths = ProjectileBlueprintInstance.EvaluateXYPath(ProjectileBlueprintInstance.EvaluteCurvesWithDistance ? LifetimeDistance-DistanceStageOffset : CurrentTimeAlive-LifetimeStageOffset);
+            Vector3 paths = ProjectileBlueprintInstance.EvaluateXYPath(ProjectileBlueprintInstance.EvaluteCurvesWithDistance ? LifetimeDistance - DistanceStageOffset : CurrentTimeAlive - LifetimeStageOffset);
 
             if (recursionData != null)
                 paths *= recursionData.PercentTravelRemaining;
@@ -1102,37 +1102,45 @@ namespace MBS.ProjectileSystem
             TrailingGameobject = trailObj;
             TrailingParticleSystem = TrailingGameobject.GetComponentInChildren<ParticleSystem>();
             TrailingAnimator = TrailingGameobject.GetComponentInChildren<Animator>();
-            trailingTrailRenderer=TrailingGameobject.GetComponentInChildren<TrailRenderer>();
+            trailingTrailRenderer = TrailingGameobject.GetComponentInChildren<TrailRenderer>();
 
-            if (TrailingParticleSystem!=null)
+            if (TrailingParticleSystem != null)
             {
                 TrailingParticleSystem.gameObject.transform.position = pos;
                 MainModule main = TrailingParticleSystem.main;
                 main.simulationSpeed = LocalTimescaleValue;
             }
 
-            if (TrailingAnimator!=null)
+            if (TrailingAnimator != null)
             {
                 TrailingAnimator.speed = LocalTimescaleValue;
             }
 
-            if (TrailingGameobject!=null)
+            if (TrailingGameobject != null)
             {
                 TrailingGameobject.transform.position = pos;
                 TrailingGameobject.transform.rotation = Quaternion.Euler(TrailingGameobject.transform.rotation.eulerAngles + ProjectileBlueprintInstance.ParticleSystemRotationOffset);
                 TrailingGameobject.SetActive(true);
             }
-            
+
         }
 
-        public void KillProjectile(bool AllowOnDeathStages)
+        public void KillProjectile(bool allowOnDeathStages, bool cleanupGraphicsImmidiate = false)
         {
             Alive = false;
-            if (AllowOnDeathStages)
+            if (allowOnDeathStages)
                 HandleStages();
+
+            if (cleanupGraphicsImmidiate)
+            {
+                MainParticle[0].remainingLifetime = -1;
+                if (TrailingParticleSystem != null)
+                    TrailingParticleSystem.gameObject.SetActive(false);
+                if (TrailingGameobject != null)
+                    TrailingGameobject.SetActive(false);
+            }
         }
         #endregion
-
 
 
         public class MoveRecursionData

@@ -141,6 +141,14 @@ namespace MBS.ProjectileSystem
                 TrackVelocity();
         }
 
+        protected virtual void OnDestroy()
+        {
+            foreach(ActiveProjectile projectile in inFlightProjectiles)
+            {
+                projectile.KillProjectile(false,true);               
+            }
+        }
+
         private void InterpolateProjectiles()
         {
             if (!interpolateProjectilePosition || ProjectileParticleSystem == null || isFixedUpdateFrame)
